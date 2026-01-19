@@ -142,8 +142,53 @@
       transition: background 0.3s;
     }
 
-    button:hover {
+    button:hover:not(:disabled) {
       background: #357abd;
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .message {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .message.show {
+      display: block;
     }
   </style>
 </head>
@@ -183,6 +228,18 @@
             <p>Easy to deploy as a static website anywhere</p>
           </div>
         </div>
+
+        <!-- API Test Section -->
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+          <h3 style="margin-bottom: 1rem;">Try the API</h3>
+          <p style="margin-bottom: 1rem;">Click the button below to test a remote API call:</p>
+
+          <button id="apiTestBtn" style="margin-bottom: 1rem;">
+            <span id="apiTestBtnText">Call Remote API</span>
+          </button>
+
+          <div id="apiResponse" class="message" style="display: none;"></div>
+        </div>
       </div>
     </div>
 
@@ -196,11 +253,12 @@
           <li>Dynamic content switching without page reloads</li>
           <li>Smooth transitions between views</li>
           <li>Responsive design</li>
+          <li>Integrated API with Azure Functions</li>
         </ul>
 
         <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Technologies Used</h3>
-        <p>This project uses only vanilla web technologies - HTML5, CSS3, and JavaScript (ES6+). No dependencies or
-          build tools required!</p>
+        <p>This project uses vanilla web technologies - HTML5, CSS3, and JavaScript (ES6+). The backend uses Azure
+          Functions for serverless API endpoints. No dependencies or build tools required!</p>
       </div>
     </div>
 
@@ -208,22 +266,24 @@
     <div id="contact" class="view">
       <div class="card">
         <h2>Contact Us</h2>
-        <p>Have questions? Send us a message!</p>
+        <p>Have questions? Send us a message and we'll get back to you!</p>
 
         <form id="contactForm" style="margin-top: 2rem;">
           <input type="text" id="name" placeholder="Your Name" required>
           <input type="email" id="email" placeholder="Your Email" required>
           <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
-          <button type="submit">Send Message</button>
+          <button type="submit" id="submitBtn">
+            <span id="btnText">Send Message</span>
+          </button>
         </form>
 
-        <div id="formMessage" style="margin-top: 1rem; padding: 1rem; border-radius: 4px; display: none;"></div>
+        <div id="formMessage" class="message"></div>
       </div>
     </div>
   </main>
 
   <footer>
-    <p>&copy; 2026 My Simple SPA. Built with ❤️ using vanilla JavaScript.</p>
+    <p>&copy; 2026 My Simple SPA. Built with ❤️ using vanilla JavaScript and Azure Functions.</p>
   </footer>
 
   <script>
@@ -294,41 +354,115 @@
     });
 
     // Handle form submission
-    document.getElementById('contactForm').addEventListener('submit', (e) => {
+    document.getElementById('contactForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
       const message = document.getElementById('message').value;
 
-      // Show success message
+      const submitBtn = document.getElementById('submitBtn');
+      const btnText = document.getElementById('btnText');
       const formMessage = document.getElementById('formMessage');
-      formMessage.style.display = 'block';
-      formMessage.style.background = '#d4edda';
-      formMessage.style.color = '#155724';
-      formMessage.style.border = '1px solid #c3e6cb';
-      formMessage.textContent = `Thank you, ${name}! Your message has been received. We'll get back to you at ${email} soon.`;
 
-      // Reset form
-      e.target.reset();
+      // Disable button and show loading state
+      submitBtn.disabled = true;
+      btnText.innerHTML = '<span class="spinner"></span>Sending...';
 
-      // Hide message after 5 seconds
-      setTimeout(() => {
-        formMessage.style.display = 'none';
-      }, 5000);
+      // Hide any previous messages
+      formMessage.classList.remove('show', 'success', 'error');
+
+      try {
+        // Call the API
+        const response = await fetch('/api/sendEmail', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            message: message
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Show success message
+          formMessage.className = 'message success show';
+          formMessage.textContent = `Thank you, ${name}! Your message has been sent successfully. We'll get back to you at ${email} soon.`;
+
+          // Reset form
+          e.target.reset();
+        } else {
+          // Show error message
+          formMessage.className = 'message error show';
+          formMessage.textContent = `Error: ${data.error || 'Failed to send message. Please try again.'}`;
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        formMessage.className = 'message error show';
+        formMessage.textContent = 'Network error. Please check your connection and try again.';
+      } finally {
+        // Re-enable button
+        submitBtn.disabled = false;
+        btnText.textContent = 'Send Message';
+
+        // Hide message after 7 seconds
+        setTimeout(() => {
+          formMessage.classList.remove('show');
+        }, 7000);
+      }
     });
 
-    // Test API button: calls Azure Function at /api/HttpTrigger
-    document.getElementById('testApiBtn').addEventListener('click', async function () {
-      const resultEl = document.getElementById('apiResult');
-      resultEl.textContent = 'Calling API...';
+    // Handle API test button
+    document.getElementById('apiTestBtn').addEventListener('click', async () => {
+      const apiTestBtn = document.getElementById('apiTestBtn');
+      const btnText = document.getElementById('apiTestBtnText');
+      const responseDiv = document.getElementById('apiResponse');
+
+      // Disable button and show loading state
+      apiTestBtn.disabled = true;
+      btnText.innerHTML = '<span class="spinner"></span>Loading...';
+
+      // Hide previous response
+      responseDiv.style.display = 'none';
+      responseDiv.className = 'message';
+
       try {
-        const resp = await fetch('/api/HttpTrigger?name=WebsiteVisitor');
-        if (!resp.ok) throw new Error(`Status ${resp.status}`);
-        const data = await resp.json();
-        resultEl.textContent = data.message || JSON.stringify(data);
-      } catch (err) {
-        resultEl.textContent = 'API error: ' + err.message;
+        // Call a public test API (JSONPlaceholder)
+        const response = await fetch('/api/HttpTrigger?name=WebsiteVisitor');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Show success message with API data
+        responseDiv.className = 'message success';
+        responseDiv.style.display = 'block';
+        responseDiv.innerHTML = `
+                    <strong>✅ API Response Received!</strong><br><br>
+                    <strong>Title:</strong> ${data.title}<br>
+                    <strong>Body:</strong> ${data.body}<br><br>
+                    <small>API endpoint: ${response.url}</small>
+                `;
+
+      } catch (error) {
+        console.error('API Error:', error);
+        responseDiv.className = 'message error';
+        responseDiv.style.display = 'block';
+        responseDiv.innerHTML = `
+                    <strong>❌ Error calling API</strong><br>
+                    ${error.message}
+                `;
+      } finally {
+        // Re-enable button
+        apiTestBtn.disabled = false;
+        btnText.textContent = 'Call Remote API';
       }
     });
   </script>

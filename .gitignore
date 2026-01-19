@@ -1,0 +1,24 @@
+# Azure Functions
+api/node_modules/
+api/.funcignore
+api/local.settings.json
+api/bin/
+api/obj/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local

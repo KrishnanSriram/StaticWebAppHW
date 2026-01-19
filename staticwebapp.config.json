@@ -1,0 +1,12 @@
+{
+  "routes": [
+    {
+      "route": "/api/httpTrigger1",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "statusCode": 200
+    }
+  ]
+}

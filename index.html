@@ -317,6 +317,20 @@
         formMessage.style.display = 'none';
       }, 5000);
     });
+
+    // Test API button: calls Azure Function at /api/HttpTrigger
+    document.getElementById('testApiBtn').addEventListener('click', async function () {
+      const resultEl = document.getElementById('apiResult');
+      resultEl.textContent = 'Calling API...';
+      try {
+        const resp = await fetch('/api/HttpTrigger?name=WebsiteVisitor');
+        if (!resp.ok) throw new Error(`Status ${resp.status}`);
+        const data = await resp.json();
+        resultEl.textContent = data.message || JSON.stringify(data);
+      } catch (err) {
+        resultEl.textContent = 'API error: ' + err.message;
+      }
+    });
   </script>
 </body>
 

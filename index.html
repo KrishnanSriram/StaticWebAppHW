@@ -433,7 +433,7 @@
 
       try {
         // Call a public test API (JSONPlaceholder)
-        const response = await fetch('/api/HttpTrigger?name=WebsiteVisitor');
+        const response = await fetch('/api/httpTrigger1?name=WebsiteVisitor');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

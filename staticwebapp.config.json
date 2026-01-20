@@ -2,11 +2,7 @@
   "routes": [
     {
       "route": "/api/httpTrigger1",
-      "methods": [
-        "get",
-        "post"
-      ],
-      "statusCode": 200
+      "rewrite": "/api/httpTrigger1"
     }
   ]
 }

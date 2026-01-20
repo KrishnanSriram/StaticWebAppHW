@@ -1,8 +1,1 @@
-{
-  "routes": [
-    {
-      "route": "/api/httpTrigger1",
-      "rewrite": "/api/httpTrigger1"
-    }
-  ]
-}
+{}

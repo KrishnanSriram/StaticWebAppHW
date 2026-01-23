@@ -433,13 +433,13 @@
 
       try {
         // Call a public test API (JSONPlaceholder)
-        const response = await fetch('/api/httpTrigger1?name=WebsiteVisitor');
+        const response = await fetch('https://helloworldpy001.azurewebsites.net/api/hello?code=1X9BT7Un65A-xr3w4DmHGW66UbJbzDDgjXKTLWTYc2HbAzFunvjSxA==&name=Krishnan');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data = response; //await response.json();
 
         // Show success message with API data
         responseDiv.className = 'message success';

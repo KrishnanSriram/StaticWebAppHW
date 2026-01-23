@@ -439,7 +439,7 @@
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
+        const data =  response; //await response.json();
 
         // Show success message with API data
         responseDiv.className = 'message success';

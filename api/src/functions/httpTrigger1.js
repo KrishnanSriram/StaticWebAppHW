@@ -9,11 +9,9 @@ app.http('httpTrigger1', {
     const name = request.query.get('name') || (await request.text()) || 'world';
 
     return {
-      status: 200 /* Defaults to 200 */,
-      body: { body: `Hello, ${name}!`, title: 'Greeting' },
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      status: 200,
+      body: JSON.stringify({ body: `Hello, ${name}!`, title: 'Greeting' }),
+      contentType: 'application/json',
     };
   },
 });

@@ -8,10 +8,9 @@ app.http('httpTrigger1', {
 
         const name = request.query.get('name') || await request.text() || 'world';
 
-        return { body: JSON.stringify({
-                body: `Hello, ${name}!`,
-                title: 'Greeting'
-            }) };
+        return { 'body': `Hello, ${name}!`,
+                'title': 'Greeting' };
     }
 });
+
 

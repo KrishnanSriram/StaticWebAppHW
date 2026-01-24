@@ -1,471 +1,466 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Simple SPA</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: #333;
-    }
-
-    header {
-      background: #4a90e2;
-      color: white;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    nav {
-      display: flex;
-      gap: 2rem;
-      margin-top: 1rem;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 4px;
-      transition: background 0.3s;
-    }
-
-    nav a:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    nav a.active {
-      background: rgba(255, 255, 255, 0.3);
-      font-weight: bold;
-    }
-
-    main {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-
-    .view {
-      display: none;
-      animation: fadeIn 0.3s;
-    }
-
-    .view.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Simple SPA</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.6;
+        color: #333;
       }
-    }
 
-    .card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 2rem;
-    }
-
-    h1,
-    h2 {
-      margin-bottom: 1rem;
-      color: #2c3e50;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .feature-card {
-      background: #f8f9fa;
-      padding: 1.5rem;
-      border-radius: 8px;
-      border-left: 4px solid #4a90e2;
-    }
-
-    .feature-card h3 {
-      color: #4a90e2;
-      margin-bottom: 0.5rem;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem;
-      background: #f8f9fa;
-      margin-top: 4rem;
-      color: #666;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 500px;
-    }
-
-    input,
-    textarea {
-      padding: 0.75rem;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-family: inherit;
-    }
-
-    button {
-      background: #4a90e2;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-
-    button:hover:not(:disabled) {
-      background: #357abd;
-    }
-
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 0.6s linear infinite;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
+      header {
+        background: #4a90e2;
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
-    }
 
-    .message {
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 4px;
-      display: none;
-    }
+      nav {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+      }
 
-    .message.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
+      nav a {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background 0.3s;
+      }
 
-    .message.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
 
-    .message.show {
-      display: block;
-    }
-  </style>
-</head>
+      nav a.active {
+        background: rgba(255, 255, 255, 0.3);
+        font-weight: bold;
+      }
 
-<body>
-  <header>
-    <h1>My Simple SPA</h1>
-    <nav id="nav">
-      <a href="#home" class="nav-link active">Home</a>
-      <a href="#about" class="nav-link">About</a>
-      <a href="#contact" class="nav-link">Contact</a>
-    </nav>
-  </header>
+      main {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 2rem;
+      }
 
-  <main>
-    <!-- Home View -->
-    <div id="home" class="view active">
-      <div class="card">
-        <h2>Welcome to My Single Page Application</h2>
-        <p>This is a simple SPA built with vanilla HTML, CSS, and JavaScript. No frameworks required!</p>
+      .view {
+        display: none;
+        animation: fadeIn 0.3s;
+      }
 
-        <div class="feature-grid">
-          <div class="feature-card">
-            <h3>⚡ Fast</h3>
-            <p>No page reloads, instant navigation between views</p>
+      .view.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      h1,
+      h2 {
+        margin-bottom: 1rem;
+        color: #2c3e50;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+      }
+
+      .feature-card {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #4a90e2;
+      }
+
+      .feature-card h3 {
+        color: #4a90e2;
+        margin-bottom: 0.5rem;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem;
+        background: #f8f9fa;
+        margin-top: 4rem;
+        color: #666;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-width: 500px;
+      }
+
+      input,
+      textarea {
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+      }
+
+      button {
+        background: #4a90e2;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+
+      button:hover:not(:disabled) {
+        background: #357abd;
+      }
+
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 0.6s linear infinite;
+        margin-right: 8px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .message {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>My Simple SPA</h1>
+      <nav id="nav">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Home View -->
+      <div id="home" class="view active">
+        <div class="card">
+          <h2>Welcome to My Single Page Application</h2>
+          <p>This is a simple SPA built with vanilla HTML, CSS, and JavaScript. No frameworks required!</p>
+
+          <div class="feature-grid">
+            <div class="feature-card">
+              <h3>⚡ Fast</h3>
+              <p>No page reloads, instant navigation between views</p>
+            </div>
+            <div class="feature-card">
+              <h3>📱 Responsive</h3>
+              <p>Works seamlessly on desktop, tablet, and mobile devices</p>
+            </div>
+            <div class="feature-card">
+              <h3>🎨 Modern</h3>
+              <p>Clean design with smooth animations and transitions</p>
+            </div>
+            <div class="feature-card">
+              <h3>🚀 Simple</h3>
+              <p>Easy to deploy as a static website anywhere</p>
+            </div>
           </div>
-          <div class="feature-card">
-            <h3>📱 Responsive</h3>
-            <p>Works seamlessly on desktop, tablet, and mobile devices</p>
-          </div>
-          <div class="feature-card">
-            <h3>🎨 Modern</h3>
-            <p>Clean design with smooth animations and transitions</p>
-          </div>
-          <div class="feature-card">
-            <h3>🚀 Simple</h3>
-            <p>Easy to deploy as a static website anywhere</p>
+
+          <!-- API Test Section -->
+          <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e0e0e0">
+            <h3 style="margin-bottom: 1rem">Try the API</h3>
+            <p style="margin-bottom: 1rem">Click the button below to test a remote API call:</p>
+
+            <button id="apiTestBtn" style="margin-bottom: 1rem">
+              <span id="apiTestBtnText">Call Remote API</span>
+            </button>
+
+            <div id="apiResponse" class="message" style="display: none"></div>
           </div>
         </div>
+      </div>
 
-        <!-- API Test Section -->
-        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
-          <h3 style="margin-bottom: 1rem;">Try the API</h3>
-          <p style="margin-bottom: 1rem;">Click the button below to test a remote API call:</p>
+      <!-- About View -->
+      <div id="about" class="view">
+        <div class="card">
+          <h2>About This Project</h2>
+          <p>This SPA demonstrates the core concepts of single-page applications:</p>
+          <ul style="margin-left: 2rem; margin-top: 1rem; line-height: 2">
+            <li>Client-side routing using URL hash</li>
+            <li>Dynamic content switching without page reloads</li>
+            <li>Smooth transitions between views</li>
+            <li>Responsive design</li>
+            <li>Integrated API with Azure Functions</li>
+          </ul>
 
-          <button id="apiTestBtn" style="margin-bottom: 1rem;">
-            <span id="apiTestBtnText">Call Remote API</span>
-          </button>
-
-          <div id="apiResponse" class="message" style="display: none;"></div>
+          <h3 style="margin-top: 2rem; margin-bottom: 1rem">Technologies Used</h3>
+          <p>This project uses vanilla web technologies - HTML5, CSS3, and JavaScript (ES6+). The backend uses Azure Functions for serverless API endpoints. No dependencies or build tools required!</p>
         </div>
       </div>
-    </div>
 
-    <!-- About View -->
-    <div id="about" class="view">
-      <div class="card">
-        <h2>About This Project</h2>
-        <p>This SPA demonstrates the core concepts of single-page applications:</p>
-        <ul style="margin-left: 2rem; margin-top: 1rem; line-height: 2;">
-          <li>Client-side routing using URL hash</li>
-          <li>Dynamic content switching without page reloads</li>
-          <li>Smooth transitions between views</li>
-          <li>Responsive design</li>
-          <li>Integrated API with Azure Functions</li>
-        </ul>
+      <!-- Contact View -->
+      <div id="contact" class="view">
+        <div class="card">
+          <h2>Contact Us</h2>
+          <p>Have questions? Send us a message and we'll get back to you!</p>
 
-        <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Technologies Used</h3>
-        <p>This project uses vanilla web technologies - HTML5, CSS3, and JavaScript (ES6+). The backend uses Azure
-          Functions for serverless API endpoints. No dependencies or build tools required!</p>
+          <form id="contactForm" style="margin-top: 2rem">
+            <input type="text" id="name" placeholder="Your Name" required />
+            <input type="email" id="email" placeholder="Your Email" required />
+            <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+            <button type="submit" id="submitBtn">
+              <span id="btnText">Send Message</span>
+            </button>
+          </form>
+
+          <div id="formMessage" class="message"></div>
+        </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Contact View -->
-    <div id="contact" class="view">
-      <div class="card">
-        <h2>Contact Us</h2>
-        <p>Have questions? Send us a message and we'll get back to you!</p>
+    <footer>
+      <p>&copy; 2026 My Simple SPA. Built with ❤️ using vanilla JavaScript and Azure Functions.</p>
+    </footer>
 
-        <form id="contactForm" style="margin-top: 2rem;">
-          <input type="text" id="name" placeholder="Your Name" required>
-          <input type="email" id="email" placeholder="Your Email" required>
-          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
-          <button type="submit" id="submitBtn">
-            <span id="btnText">Send Message</span>
-          </button>
-        </form>
+    <script>
+      // Router functionality
+      class Router {
+        constructor() {
+          this.routes = {};
+          this.currentRoute = null;
 
-        <div id="formMessage" class="message"></div>
-      </div>
-    </div>
-  </main>
+          // Listen for hash changes
+          window.addEventListener('hashchange', () => this.handleRoute());
 
-  <footer>
-    <p>&copy; 2026 My Simple SPA. Built with ❤️ using vanilla JavaScript and Azure Functions.</p>
-  </footer>
-
-  <script>
-    // Router functionality
-    class Router {
-      constructor() {
-        this.routes = {};
-        this.currentRoute = null;
-
-        // Listen for hash changes
-        window.addEventListener('hashchange', () => this.handleRoute());
-
-        // Handle initial load
-        this.handleRoute();
-      }
-
-      addRoute(path, handler) {
-        this.routes[path] = handler;
-      }
-
-      handleRoute() {
-        const hash = window.location.hash.slice(1) || 'home';
-
-        // Hide all views
-        document.querySelectorAll('.view').forEach(view => {
-          view.classList.remove('active');
-        });
-
-        // Remove active class from all nav links
-        document.querySelectorAll('.nav-link').forEach(link => {
-          link.classList.remove('active');
-        });
-
-        // Show current view
-        const view = document.getElementById(hash);
-        if (view) {
-          view.classList.add('active');
-          this.currentRoute = hash;
+          // Handle initial load
+          this.handleRoute();
         }
 
-        // Add active class to current nav link
-        const activeLink = document.querySelector(`a[href="#${hash}"]`);
-        if (activeLink) {
-          activeLink.classList.add('active');
+        addRoute(path, handler) {
+          this.routes[path] = handler;
         }
 
-        // Execute route handler if exists
-        if (this.routes[hash]) {
-          this.routes[hash]();
+        handleRoute() {
+          const hash = window.location.hash.slice(1) || 'home';
+
+          // Hide all views
+          document.querySelectorAll('.view').forEach((view) => {
+            view.classList.remove('active');
+          });
+
+          // Remove active class from all nav links
+          document.querySelectorAll('.nav-link').forEach((link) => {
+            link.classList.remove('active');
+          });
+
+          // Show current view
+          const view = document.getElementById(hash);
+          if (view) {
+            view.classList.add('active');
+            this.currentRoute = hash;
+          }
+
+          // Add active class to current nav link
+          const activeLink = document.querySelector(`a[href="#${hash}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+          }
+
+          // Execute route handler if exists
+          if (this.routes[hash]) {
+            this.routes[hash]();
+          }
         }
       }
-    }
 
-    // Initialize router
-    const router = new Router();
+      // Initialize router
+      const router = new Router();
 
-    // Add route handlers
-    router.addRoute('home', () => {
-      console.log('Home page loaded');
-    });
+      // Add route handlers
+      router.addRoute('home', () => {
+        console.log('Home page loaded');
+      });
 
-    router.addRoute('about', () => {
-      console.log('About page loaded');
-    });
+      router.addRoute('about', () => {
+        console.log('About page loaded');
+      });
 
-    router.addRoute('contact', () => {
-      console.log('Contact page loaded');
-    });
+      router.addRoute('contact', () => {
+        console.log('Contact page loaded');
+      });
 
-    // Handle form submission
-    document.getElementById('contactForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+      // Handle form submission
+      document.getElementById('contactForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-      const name = document.getElementById('name').value;
-      const email = document.getElementById('email').value;
-      const message = document.getElementById('message').value;
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
 
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-      const formMessage = document.getElementById('formMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const formMessage = document.getElementById('formMessage');
 
-      // Disable button and show loading state
-      submitBtn.disabled = true;
-      btnText.innerHTML = '<span class="spinner"></span>Sending...';
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        btnText.innerHTML = '<span class="spinner"></span>Sending...';
 
-      // Hide any previous messages
-      formMessage.classList.remove('show', 'success', 'error');
+        // Hide any previous messages
+        formMessage.classList.remove('show', 'success', 'error');
 
-      try {
-        // Call the API
-        const response = await fetch('/api/sendEmail', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            message: message
-          })
-        });
+        try {
+          // Call the API
+          const response = await fetch('/api/sendEmail', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: name,
+              email: email,
+              message: message,
+            }),
+          });
 
-        const data = await response.json();
+          const data = await response.json();
 
-        if (response.ok) {
-          // Show success message
-          formMessage.className = 'message success show';
-          formMessage.textContent = `Thank you, ${name}! Your message has been sent successfully. We'll get back to you at ${email} soon.`;
+          if (response.ok) {
+            // Show success message
+            formMessage.className = 'message success show';
+            formMessage.textContent = `Thank you, ${name}! Your message has been sent successfully. We'll get back to you at ${email} soon.`;
 
-          // Reset form
-          e.target.reset();
-        } else {
-          // Show error message
+            // Reset form
+            e.target.reset();
+          } else {
+            // Show error message
+            formMessage.className = 'message error show';
+            formMessage.textContent = `Error: ${data.error || 'Failed to send message. Please try again.'}`;
+          }
+        } catch (error) {
+          console.error('Error:', error);
           formMessage.className = 'message error show';
-          formMessage.textContent = `Error: ${data.error || 'Failed to send message. Please try again.'}`;
+          formMessage.textContent = 'Network error. Please check your connection and try again.';
+        } finally {
+          // Re-enable button
+          submitBtn.disabled = false;
+          btnText.textContent = 'Send Message';
+
+          // Hide message after 7 seconds
+          setTimeout(() => {
+            formMessage.classList.remove('show');
+          }, 7000);
         }
+      });
 
-      } catch (error) {
-        console.error('Error:', error);
-        formMessage.className = 'message error show';
-        formMessage.textContent = 'Network error. Please check your connection and try again.';
-      } finally {
-        // Re-enable button
-        submitBtn.disabled = false;
-        btnText.textContent = 'Send Message';
+      // Handle API test button
+      document.getElementById('apiTestBtn').addEventListener('click', async () => {
+        const apiTestBtn = document.getElementById('apiTestBtn');
+        const btnText = document.getElementById('apiTestBtnText');
+        const responseDiv = document.getElementById('apiResponse');
 
-        // Hide message after 7 seconds
-        setTimeout(() => {
-          formMessage.classList.remove('show');
-        }, 7000);
-      }
-    });
+        // Disable button and show loading state
+        apiTestBtn.disabled = true;
+        btnText.innerHTML = '<span class="spinner"></span>Loading...';
 
-    // Handle API test button
-    document.getElementById('apiTestBtn').addEventListener('click', async () => {
-      const apiTestBtn = document.getElementById('apiTestBtn');
-      const btnText = document.getElementById('apiTestBtnText');
-      const responseDiv = document.getElementById('apiResponse');
+        // Hide previous response
+        responseDiv.style.display = 'none';
+        responseDiv.className = 'message';
 
-      // Disable button and show loading state
-      apiTestBtn.disabled = true;
-      btnText.innerHTML = '<span class="spinner"></span>Loading...';
+        try {
+          // Call a public test API (JSONPlaceholder)
+          const response = await fetch('/api/httpTrigger1?name=WebsiteVisitor');
 
-      // Hide previous response
-      responseDiv.style.display = 'none';
-      responseDiv.className = 'message';
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
 
-      try {
-        // Call a public test API (JSONPlaceholder)
-        const response = await fetch('/api/httpTrigger1?name=WebsiteVisitor');
+          const data = await response.json();
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data =  response; //await response.json();
-
-        // Show success message with API data
-        responseDiv.className = 'message success';
-        responseDiv.style.display = 'block';
-        responseDiv.innerHTML = `
+          // Show success message with API data
+          responseDiv.className = 'message success';
+          responseDiv.style.display = 'block';
+          responseDiv.innerHTML = `
                     <strong>✅ API Response Received!</strong><br><br>
                     <strong>Title:</strong> ${data.title}<br>
                     <strong>Body:</strong> ${data.body}<br><br>
                     <small>API endpoint: ${response.url}</small>
                 `;
-
-      } catch (error) {
-        console.error('API Error:', error);
-        responseDiv.className = 'message error';
-        responseDiv.style.display = 'block';
-        responseDiv.innerHTML = `
+        } catch (error) {
+          console.error('API Error:', error);
+          responseDiv.className = 'message error';
+          responseDiv.style.display = 'block';
+          responseDiv.innerHTML = `
                     <strong>❌ Error calling API</strong><br>
                     ${error.message}
                 `;
-      } finally {
-        // Re-enable button
-        apiTestBtn.disabled = false;
-        btnText.textContent = 'Call Remote API';
-      }
-    });
-  </script>
-</body>
-
+        } finally {
+          // Re-enable button
+          apiTestBtn.disabled = false;
+          btnText.textContent = 'Call Remote API';
+        }
+      });
+    </script>
+  </body>
 </html>
